@@ -8,10 +8,11 @@ defmodule EliWeb.Eli do
 
     socket =
       socket
+      |> assign(in_data: "")
       |> set_size()
       |> assign(data: initialization_character_data())
       |> load_model("test", "/images/eli.vrm")
-      |> add_text_plane("my_greeting", "Phoenix Framework", 20, "#CC5500")
+      |> add_text_plane("my_greeting", "Eli", 20, "#CC5500")
       |> position("my_greeting", -1.7, 3.5, 0)
 
     {:ok, main(socket)}
@@ -36,6 +37,15 @@ defmodule EliWeb.Eli do
   def handle_event("get_bone", %{"name" => name}, socket) do
     IO.inspect(name)
     {:noreply, socket}
+  end
+
+  def handle_event("update_text", %{"input_text" => text}, socket) do
+    {:noreply, assign(socket, in_data: text)}
+  end
+
+  def handle_event("my_form_submit_event", p, socket) do
+    IO.inspect(p)
+    {:noreply, assign(socket, in_data: "")}
   end
 
   defp initialization_character_data() do

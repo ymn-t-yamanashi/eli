@@ -17,7 +17,7 @@ defmodule EliWeb.Router do
   scope "/", EliWeb do
     pipe_through :browser
     live "/", Eli, :index
-    #get "/", PageController, :home
+    # get "/", PageController, :home
   end
 
   # Other scopes may use custom stacks.

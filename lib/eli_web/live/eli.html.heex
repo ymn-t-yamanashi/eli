@@ -1,1 +1,11 @@
 <div id="threejs" phx-hook="threejs" phx-update="ignore"></div>
+<.form for={%{}} phx-submit="my_form_submit_event">
+  <input
+    type="text"
+    class="w-full bg-black text-white p-2 rounded-md border border-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-700"
+    id="my_input"
+    name="input_text"
+    phx-change="update_text"
+    value={@in_data}
+  />
+</.form>
