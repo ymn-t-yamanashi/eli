@@ -43,8 +43,9 @@ defmodule EliWeb.Eli do
     {:noreply, assign(socket, in_data: text)}
   end
 
-  def handle_event("my_form_submit_event", p, socket) do
-    IO.inspect(p)
+  def handle_event("my_form_submit_event", %{"input_text" => text}, socket) do
+    Dify.llm(text)
+    |> Speak.speak(14)
     {:noreply, assign(socket, in_data: "")}
   end
 
