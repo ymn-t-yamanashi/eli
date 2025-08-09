@@ -54,19 +54,27 @@ defmodule EliWeb.Eli do
   end
 
   defp main(socket) do
-    character_data = update(socket.assigns.data)
+    t = update(socket.assigns.data)
+
+    arm_ampl = :math.pi() / 8   # radians (~22.5°)
+    leg_ampl = :math.pi() / 6   # radians (~30°)
+    speed = 4.0                 # oscillation speed
+
+    angle_arm_l = arm_ampl * :math.sin(speed * t)
+    angle_arm_r = -arm_ampl * :math.sin(speed * t + 0.5)
+
+    angle_leg_l = leg_ampl * :math.cos(speed * t)
+    angle_leg_r = -leg_ampl * :math.cos(speed * t + 0.5)
+
+    socket =
+      socket
+      |> rotation_bone("test", "J_Bip_R_UpperArm", angle_arm_r, nil, nil)
+      |> rotation_bone("test", "J_Bip_L_UpperArm", angle_arm_l, nil, nil)
+      |> rotation_bone("test", "J_Bip_R_UpperLeg", angle_leg_r, nil, nil)
+      |> rotation_bone("test", "J_Bip_L_UpperLeg", angle_leg_l, nil, nil)
 
     socket
-    |> rotation_bone("test", "J_Bip_R_UpperArm", character_data, character_data, character_data)
-    |> rotation_bone("test", "J_Bip_L_UpperArm", character_data, character_data, character_data)
-    # |> rotation_bone("test", "J_Bip_L_UpperLeg", character_data, character_data, character_data)
-    # |> rotation_bone("test", "J_Bip_L_LowerLeg", character_data, character_data, character_data)
-    # |> rotation_bone("test", "J_Bip_L_ToeBase", character_data, character_data, character_data)
-    # |> rotation_bone("test", "J_Bip_R_LowerLeg", character_data, character_data, character_data)
-    # |> rotation_bone("test", "J_Bip_R_ToeBase", character_data, character_data, character_data)
-    # |> rotation_bone("test", "J_Bip_C_Neck", character_data, character_data, character_data)
-    # |> rotation_bone("test", "J_Bip_C_Hips", character_data, character_data, character_data)
-    |> assign(data: character_data)
+    |> assign(data: t)
   end
 
   defp update(character_data) do
