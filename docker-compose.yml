@@ -1,0 +1,27 @@
+# docker-compose.yml
+version: "3"
+
+services:
+  # ---------------------------------
+  # ollama
+  # ---------------------------------
+  ollama:
+    image: ollama/ollama          # 公式イメージ
+    container_name: ollama        # 任意で名前を付ける（省略可）
+    volumes:
+      - ollama:/root/.ollama     # データ永続化用ボリューム
+    ports:
+      - "11434:11434"            # 11434 番ポートを公開
+
+  # ---------------------------------
+  # voicevox
+  # ---------------------------------
+  voicevox:
+    image: voicevox/voicevox_engine:cpu-latest
+    container_name: voicevox
+    ports:
+      - "127.0.0.1:50021:50021"   # ホスト側はローカルホストに限定
+    # tty: true                  # 必要なら対話型ターミナルを保持する
+
+volumes:
+  ollama:                         # ボリューム定義
