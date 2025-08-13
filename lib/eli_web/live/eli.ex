@@ -44,7 +44,17 @@ defmodule EliWeb.Eli do
   end
 
   def handle_event("my_form_submit_event", %{"input_text" => text}, socket) do
-    Dify.llm(text)
+
+    client = Ollama.init()
+    # Dify.llm(text)
+    {:ok, ret} = Ollama.completion(client,
+       model: "gemma3:1b-it-qat",
+       system: "私は会話をします。私は会話の為かならず100文字以内に返事をします。",
+       prompt: text
+    )
+
+    ret
+    |> Map.get("response")
     |> Speak.speak(14)
     {:noreply, assign(socket, in_data: "")}
   end
