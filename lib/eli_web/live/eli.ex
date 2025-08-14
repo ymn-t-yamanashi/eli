@@ -45,18 +45,37 @@ defmodule EliWeb.Eli do
 
   def handle_event("my_form_submit_event", %{"input_text" => text}, socket) do
 
-    client = Ollama.init()
-    # Dify.llm(text)
-    {:ok, ret} = Ollama.completion(client,
-       model: "gemma3:1b-it-qat",
-       system: "私は会話をします。私は会話の為かならず100文字以内に返事をします。",
-       prompt: text
-    )
+    # Start async task to avoid blocking LiveView
+    Task.start(fn ->
+      try do
+        client = Ollama.init()
+        {:ok, ret} = Ollama.completion(client,
+          model: "gemma3:1b-it-qat",
+          system: "私は会話をします。私は会話の為かならず100文字以内に返事をします。",
+          prompt: text
+        )
 
-    ret
-    |> Map.get("response")
-    |> Speak.speak(14)
-    {:noreply, assign(socket, in_data: "")}
+        response = Map.get(ret, "response")
+        Speak.speak(response, 14)
+
+        send(self(), {:my_form_complete, :ok})
+      rescue
+        e -> send(self(), {:my_form_error, Exception.message(e)})
+      end
+    end)
+
+    # Show loading state (optional)
+    {:noreply, assign(socket, loading: true)}
+
+  end
+
+  def handle_info({:my_form_complete, _}, socket) do
+    {:noreply, assign(socket, in_data: "", loading: false)}
+  end
+
+  def handle_info({:my_form_error, msg}, socket) do
+    IO.puts("Error in my_form_submit_event: #{msg}")
+    {:noreply, assign(socket, in_data: "", loading: false)}
   end
 
   defp initialization_character_data() do

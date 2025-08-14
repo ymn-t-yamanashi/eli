@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>VoiceVox Demo – ユーザー操作で音声</title>
+<style>
+  body{font-family:Arial,sans-serif;text-align:center;padding-top:50px;}
+  button{
+    padding:12px 24px;font-size:1.2rem;background:#4caf50;color:white;border:none;
+    border-radius:6px;cursor:pointer;
+  }
+  button:hover{background:#45a049;}
+</style>
+</head>
+
+<body>
+<h1>VoiceVox Demo</h1>
+<p>クリックして音声を再生します。</p>
+<button id="playBtn">▶︎ 音声を再生</button>
+
+<script>
+/**
+ * VoiceVox Engine が http://localhost:50021 で稼働している前提
+ */
+async function playVoice() {
+  const text = 'HTMLで音声';
+  const speakerId = 1;          // デフォルトボイス（0=男性, 1=女性）
+  const apiBase   = 'http://localhost:50021';
+
+  try {
+    /* audio_query (POST) */
+    const queryResp = await fetch(
+      `${apiBase}/audio_query?text=${encodeURIComponent(text)}&speaker=${speakerId}`,
+      { method: 'POST' }
+    );
+    if (!queryResp.ok) throw new Error(`audio_query error: ${queryResp.status}`);
+    const queryJson = await queryResp.json();
+
+    /* synthesis (POST) */
+    const synthResp = await fetch(`${apiBase}/synthesis?speaker=${speakerId}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(queryJson)
+    });
+    if (!synthResp.ok) throw new Error(`synthesis error: ${synthResp.status}`);
+    const audioBlob = await synthResp.blob();
+
+    /* 再生 */
+    const audioUrl = URL.createObjectURL(audioBlob);
+    const audioObj = new Audio(audioUrl);
+    await audioObj.play();          // ユーザー操作後なので許可される
+    console.log('音声を再生しました。');
+  } catch (err) {
+    console.error(err);
+    alert('音声再生に失敗しました。コンソールをご確認ください。');
+  }
+}
+
+/* ボタン押下で実行 */
+document.getElementById('playBtn').addEventListener('click', playVoice);
+</script>
+</body>
+</html>
