@@ -27,7 +27,7 @@ defmodule EliWeb.Eli do
   def handle_event("load_model", %{"name" => "test", "status" => "completion"}, socket) do
     socket =
       socket
-      |> position("test", 0, -1, 3)
+      |> position("test", 0, -1.4, 4.6)
       |> rotation("test", 0, 3.2, 0)
       |> get_bone("test")
 
@@ -86,15 +86,10 @@ defmodule EliWeb.Eli do
     character_data = update(socket.assigns.data)
 
     socket
-    |> rotation_bone("test", "J_Bip_R_UpperArm", character_data, character_data, character_data)
-    |> rotation_bone("test", "J_Bip_L_UpperArm", character_data, character_data, character_data)
-    # |> rotation_bone("test", "J_Bip_L_UpperLeg", character_data, character_data, character_data)
-    # |> rotation_bone("test", "J_Bip_L_LowerLeg", character_data, character_data, character_data)
-    # |> rotation_bone("test", "J_Bip_L_ToeBase", character_data, character_data, character_data)
-    # |> rotation_bone("test", "J_Bip_R_LowerLeg", character_data, character_data, character_data)
-    # |> rotation_bone("test", "J_Bip_R_ToeBase", character_data, character_data, character_data)
-    # |> rotation_bone("test", "J_Bip_C_Neck", character_data, character_data, character_data)
-    # |> rotation_bone("test", "J_Bip_C_Hips", character_data, character_data, character_data)
+
+    |> rotation_bone("test", "J_Bip_R_UpperArm", -1.0, 1.5708, 0.0)
+    |> rotation_bone("test", "J_Bip_L_UpperArm", -1.0, -1.5708, 0.0)
+
     |> assign(data: character_data)
   end
 
