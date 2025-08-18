@@ -29,6 +29,8 @@ defmodule EliWeb.Eli do
       socket
       |> position("test", 0, -1.4, 4.6)
       |> rotation("test", 0, 3.2, 0)
+      |> rotation_bone("test", "J_Bip_R_UpperArm", -1.0, 1.2, 0.0)
+      |> rotation_bone("test", "J_Bip_L_UpperArm", -1.0, -1.2, 0.0)
       |> get_bone("test")
 
     {:noreply, socket}
@@ -44,16 +46,17 @@ defmodule EliWeb.Eli do
   end
 
   def handle_event("my_form_submit_event", %{"input_text" => text}, socket) do
-
     # Start async task to avoid blocking LiveView
     Task.start(fn ->
       try do
         client = Ollama.init()
-        {:ok, ret} = Ollama.completion(client,
-          model: "gemma3:1b-it-qat",
-          system: "私は会話をします。私は会話の為かならず100文字以内に返事をします。",
-          prompt: text
-        )
+
+        {:ok, ret} =
+          Ollama.completion(client,
+            model: "gemma3:1b-it-qat",
+            system: "私は会話をします。私は会話の為かならず100文字以内に返事をします。",
+            prompt: text
+          )
 
         response = Map.get(ret, "response")
         Speak.speak(response, 14)
@@ -66,7 +69,6 @@ defmodule EliWeb.Eli do
 
     # Show loading state (optional)
     {:noreply, assign(socket, loading: true)}
-
   end
 
   def handle_info({:my_form_complete, _}, socket) do
@@ -85,11 +87,10 @@ defmodule EliWeb.Eli do
   defp main(socket) do
     character_data = update(socket.assigns.data)
 
+    sin = :math.sin(character_data) * 0.05
+
     socket
-
-    |> rotation_bone("test", "J_Bip_R_UpperArm", -1.0, 1.5708, 0.0)
-    |> rotation_bone("test", "J_Bip_L_UpperArm", -1.0, -1.5708, 0.0)
-
+    |> rotation("test", 0.01, 3.2, sin)
     |> assign(data: character_data)
   end
 
