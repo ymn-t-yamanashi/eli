@@ -12,8 +12,8 @@ defmodule EliWeb.Eli do
       |> set_size()
       |> assign(data: initialization_character_data())
       |> load_model("test", "/images/eli.vrm")
-      |> add_text_plane("my_greeting", "Eli", 20, "#CC5500")
-      |> position("my_greeting", -1.7, 3.5, 0)
+      |> add_text_plane("my_greeting", "人工無能Eliちゃん(16)", 60, "#CC5500")
+      |> position("my_greeting", -1.7, 3.3, 0)
 
     {:ok, main(socket)}
   end
@@ -29,9 +29,9 @@ defmodule EliWeb.Eli do
       socket
       |> position("test", 0, -1.4, 4.6)
       |> rotation("test", 0, 3.2, 0)
-      |> rotation_bone("test", "J_Bip_R_UpperArm", -1.0, 1.2, 0.0)
-      |> rotation_bone("test", "J_Bip_L_UpperArm", -1.0, -1.2, 0.0)
-      |> get_bone("test")
+      |> rotation_bone("test", "J_Bip_R_UpperArm", -1.0, 1.2, 0.5)
+      |> rotation_bone("test", "J_Bip_L_UpperArm", -1.0, -1.2, -0.5)
+      #|> get_bone("test")
 
     {:noreply, socket}
   end
