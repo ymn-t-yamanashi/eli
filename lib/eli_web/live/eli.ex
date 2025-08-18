@@ -54,7 +54,7 @@ defmodule EliWeb.Eli do
         {:ok, ret} =
           Ollama.completion(client,
             model: "gemma3:1b-it-qat",
-            system: "私は会話をします。私は会話の為かならず100文字以内に返事をします。",
+            system: system_prompt(),
             prompt: text
           )
 
@@ -96,5 +96,18 @@ defmodule EliWeb.Eli do
 
   defp update(character_data) do
     character_data + 0.02
+  end
+
+  defp system_prompt do
+    """
+    私は会話をします。
+    私は会話の為かならず100文字以内に返事をします。
+    私は語尾に必ず「にゃん」とつけます。
+
+    私の仕様
+    名前 エリ
+    歳 永遠の16歳
+    性格 ツンデレ、感情的、論理的に考えるのは苦手
+    """
   end
 end
