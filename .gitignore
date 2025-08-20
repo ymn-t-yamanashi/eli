@@ -35,3 +35,4 @@ eli-*.tar
 npm-debug.log
 /assets/node_modules/
 
+*.wav
